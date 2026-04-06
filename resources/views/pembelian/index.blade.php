@@ -24,6 +24,27 @@
 
     </div>
 
+    <form method="GET" class="flex gap-2 mb-4">
+
+        <input type="date"
+            name="from"
+            value="{{ request('from') }}"
+            onchange="this.form.submit()"
+            class="border rounded px-3 py-2 text-sm">
+
+        <input type="date"
+            name="to"
+            value="{{ request('to') }}"
+            onchange="this.form.submit()"
+            class="border rounded px-3 py-2 text-sm">
+
+        <a href="{{ route('pembelian.index') }}"
+        class="bg-gray-500 text-white px-4 py-2 rounded-lg text-sm">
+            Reset
+        </a>
+
+    </form>
+
     <div class="overflow-x-auto">
         <table class="w-full text-sm text-left">
 

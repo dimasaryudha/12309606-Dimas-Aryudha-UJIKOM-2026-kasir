@@ -32,22 +32,36 @@ class PembelianController extends Controller
             $hari = $hariMap[$request->hari] ?? null;
 
             if ($hari) {
-                $query->whereRaw('DAYOFWEEK(tanggal) = ?', [$hari + 1]);
                 // MySQL: 1 = Minggu, jadi +1
+                $query->whereRaw('DAYOFWEEK(tanggal) = ?', [$hari + 1]);
             }
         }
 
-        // 🔥 FILTER TANGGAL
+        // 🔥 FILTER 1 HARI SPESIFIK
         if ($request->filled('tanggal')) {
             $query->whereDate('tanggal', $request->tanggal);
         }
 
+        // 🔥 FILTER RANGE TANGGAL (from - to)
+        if ($request->filled('from') && $request->filled('to')) {
+            $query->whereBetween('tanggal', [$request->from, $request->to]);
+        }
+
+        // 🔥 kalau hanya from
+        if ($request->filled('from') && !$request->filled('to')) {
+            $query->whereDate('tanggal', '>=', $request->from);
+        }
+
+        // 🔥 kalau hanya to
+        if ($request->filled('to') && !$request->filled('from')) {
+            $query->whereDate('tanggal', '<=', $request->to);
+        }
+
         $data = $query->latest()->get();
 
-        // 🔥 decode produk tetap jalan
+        // 🔥 decode detail produk
         foreach ($data as $d) {
-            $items = json_decode($d->detail_produk, true) ?? [];
-            $d->items_detail = $items;
+            $d->items_detail = json_decode($d->detail_produk, true) ?? [];
         }
 
         return view('pembelian.index', compact('data'));
