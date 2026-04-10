@@ -35,11 +35,7 @@
             <tbody class="text-gray-700">
                 @forelse($products as $index => $p)
                 <tr class="border-b">
-
-                    <!-- Nomor -->
                     <td class="py-3">{{ $index + 1 }}</td>
-
-                    <!-- Nama + Gambar -->
                     <td class="flex items-center gap-3 py-3">
                         @if($p->image)
                             <img src="{{ asset('storage/'.$p->image) }}"
@@ -87,7 +83,6 @@
     </div>
 </div>
 
-<!-- MODAL UPDATE STOK -->
 <div id="stockModal" class="fixed inset-0 bg-black bg-opacity-50 hidden items-center justify-center">
 
     <div class="bg-white p-6 rounded-lg w-80">
@@ -95,18 +90,12 @@
 
         <form id="stockForm" method="POST">
             @csrf
-
-            <!-- INPUT STOCK -->
             <input type="number" name="stock" id="stockInput"
                 value="{{ old('stock') }}"
                 class="w-full border px-3 py-2 rounded mb-2 @error('stock') border-red-500 @enderror">
-
-            <!-- ERROR -->
             @error('stock')
                 <small class="text-red-500">{{ $message }}</small>
             @enderror
-
-            <!-- BUTTON -->
             <div class="flex justify-end gap-2 mt-4">
                 <button type="button" onclick="closeModal()"
                     class="px-3 py-1 bg-gray-300 rounded">
@@ -122,7 +111,6 @@
     </div>
 </div>
 
-<!-- SCRIPT MODAL -->
 <script>
 function openModal(id, stock) {
     document.getElementById('stockModal').classList.remove('hidden');

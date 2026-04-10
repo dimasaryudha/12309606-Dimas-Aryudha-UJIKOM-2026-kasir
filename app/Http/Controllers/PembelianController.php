@@ -43,7 +43,6 @@ class PembelianController extends Controller
                     ->with('error', 'Pilih minimal 1 produk');
             }
 
-            // HITUNG TOTAL BELANJA SEBELUM POIN
             $total = 0;
             foreach ($products as $item) {
                 $product = Product::findOrFail($item['id']);
@@ -62,23 +61,16 @@ class PembelianController extends Controller
             $totalPoin = 0;
 
             if ($status == 'member') {
-                $lastPembelian = Pembelian::where('no_hp', $request->no_hp)->latest()->first();
-                $poinMember = $lastPembelian->poin ?? 0;
+                $poinDipakai = (int) ($request->poin ?? 0);
 
-                // BATAS POIN DIPAKAI MAKSIMAL 10% DARI TOTAL
-                $maxPoin = floor($total * 0.1);
+                if ($poinDipakai > $total) {
+                    $poinDipakai = $total;
+                }
 
-                // POIN DIPAKAI SESUAI INPUT, DIBATASI MEMBER & MAX 10%
-                $poinDipakai = min($request->poin ?? 0, $poinMember, $maxPoin);
-
-                // PRICE = TOTAL - POIN DIPAKAI
                 $totalFinal = $total - $poinDipakai;
-
-                // POIN BARU = 1% DARI TOTAL BELANJA SEBELUM POIN DIPAKAI
                 $poinBaru = floor($total * 0.01);
 
-                // TOTAL POIN AKHIR MEMBER
-                $totalPoin = ($poinMember - $poinDipakai) + $poinBaru;
+                $totalPoin = $poinBaru;
             } else {
                 $totalFinal = $total;
                 $poinDipakai = 0;
@@ -86,16 +78,14 @@ class PembelianController extends Controller
                 $totalPoin = 0;
             }
 
-            // VALIDASI BAYAR
             if ($request->bayar < $totalFinal) {
                 return back()->with('error', 'Uang bayar kurang');
             }
 
-            // SIMPAN PEMBELIAN
             $pembelian = Pembelian::create([
                 'name' => $status == 'member' ? $request->nama : null,
                 'tanggal' => now(),
-                'price' => $totalFinal,          // price = total - poinDipakai
+                'price' => $totalFinal, 
                 'bayar' => $request->bayar,
                 'kembalian' => $request->bayar - $totalFinal,
                 'status_member' => $status,
@@ -108,7 +98,6 @@ class PembelianController extends Controller
                 )->implode(', '),
             ]);
 
-            // KURANGI STOK PRODUK
             foreach ($products as $item) {
                 Product::find($item['id'])->decrement('stock', $item['jumlah']);
             }
@@ -119,10 +108,64 @@ class PembelianController extends Controller
 
         } catch (\Exception $e) {
             DB::rollback();
+
             return redirect()->route('pembelian.create')
                 ->with('error', $e->getMessage());
         }
     }
 
+    public function dataPembelian(Request $request)
+    {
+        $products = collect($request->products)->filter(fn($item) => isset($item['jumlah']) && $item['jumlah'] > 0);
 
+        if ($products->isEmpty()) {
+            return back()->with('error', 'Pilih minimal 1 produk');
+        }
+
+        $result = [];
+        $total = 0;
+
+        foreach ($products as $item) {
+            $product = Product::findOrFail($item['id']);
+            $subtotal = $item['jumlah'] * $product->price;
+            $total += $subtotal;
+
+            $result[] = [
+                'id' => $product->id,
+                'nama' => $product->name,
+                'harga' => $product->price,
+                'jumlah' => $item['jumlah'],
+                'subtotal' => $subtotal
+            ];
+        }
+
+        $members = Pembelian::whereNotNull('no_hp')->select('name','no_hp')->distinct()->get();
+
+        return view('pembelian.dataPembelian', compact('result', 'total', 'members'));
+    }
+
+    public function struk($id)
+    {
+        $data = Pembelian::findOrFail($id);
+        $items = json_decode($data->detail_produk, true) ?? [];
+        $data->items_detail = $items;
+
+        return view('pembelian.struk', compact('data'));
+    }
+
+    public function downloadPdf($id)
+    {
+        $data = Pembelian::findOrFail($id);
+        $items = explode(', ', $data->detail_produk);
+        $data->items_detail = $items;
+
+        $pdf = Pdf::loadView('pembelian.struk_pdf', compact('data'));
+
+        return $pdf->download('struk-pembelian-'.$data->id.'.pdf');
+    }
+
+    public function export()
+    {
+        return Excel::download(new PembelianExport, 'data_pembelian.xlsx');
+    }
 }

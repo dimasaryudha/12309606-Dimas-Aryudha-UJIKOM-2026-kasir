@@ -5,7 +5,7 @@
 <h2 class="text-xl font-bold mb-4">Tambah Pembelian</h2>
 
 <a href="{{ route('pembelian.index') }}" class="text-blue-500 mb-4 inline-block">
-    ← Kembali
+    Kembali
 </a>
 
 <form method="POST" action="{{ route('pembelian.dataPembelian') }}" class="bg-white p-6 rounded shadow">

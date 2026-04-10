@@ -5,14 +5,13 @@
 <h2 class="text-xl font-bold mb-4">Edit Produk</h2>
 
 <a href="{{ route('products.index') }}" class="text-blue-500 mb-4 inline-block">
-    ← Kembali
+    Kembali
 </a>
 
 <form action="{{ route('products.update', $product->id) }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow w-full max-w-lg">
     @csrf
     @method('PUT')
 
-    <!-- Nama -->
     <div class="mb-4">
         <label class="block mb-1">Nama Produk</label>
         <input type="text" name="name" value="{{ old('name', $product->name) }}"
@@ -24,7 +23,6 @@
         @enderror
     </div>
 
-    <!-- Harga -->
     <div class="mb-4">
         <label class="block mb-1">Harga</label>
         <input type="text" id="price" name="price"
@@ -43,11 +41,9 @@
             value="{{ $product->stock }}"
             class="w-full border px-3 py-2 rounded bg-gray-100 cursor-not-allowed"
             readonly>
-
         <small class="text-gray-500">Stok hanya bisa diubah melalui tombol "Update Stok"</small>
     </div>
 
-    <!-- Gambar Lama -->
     <div class="mb-4">
         <label class="block mb-1">Gambar Saat Ini</label>
 
@@ -59,7 +55,6 @@
         @endif
     </div>
 
-    <!-- Gambar Baru -->
     <div class="mb-4">
         <label class="block mb-1">Ganti Gambar (Opsional)</label>
         <input type="file" name="image" class="w-full">
@@ -69,7 +64,6 @@
         @enderror
     </div>
 
-    <!-- Submit -->
     <button type="submit"
         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
         Update
@@ -77,7 +71,6 @@
 
 </form>
 
-{{-- FORMAT RUPIAH --}}
 <script>
 document.getElementById('price').addEventListener('keyup', function(){
     let value = this.value.replace(/\D/g, '');

@@ -77,4 +77,34 @@ class ProductController extends Controller
         return redirect()->route('products.index')->with('success', 'Berhasil update');
     }
 
+    public function updateStock(Request $request, Product $product)
+    {
+        $validator = Validator::make($request->all(), [
+            'stock' => 'required|integer|min:0'
+        ]);
+
+        if ($validator->fails()) {
+            return back()
+                ->withErrors($validator)
+                ->withInput()
+                ->with('product_id', $product->id);
+        }
+
+        $product->update([
+            'stock' => $request->stock
+        ]);
+
+        return back()->with('success', 'Stok berhasil diupdate');
+    }
+
+    public function destroy(Product $product)
+    {
+        if ($product->image) {
+            Storage::delete('public/' . $product->image);
+        }
+
+        $product->delete();
+
+        return back()->with('success', 'Berhasil hapus');
+    }
 }

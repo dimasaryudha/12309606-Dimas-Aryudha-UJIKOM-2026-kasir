@@ -5,7 +5,7 @@
 <h2 class="text-xl font-bold mb-4">Tambah Produk</h2>
 
 <a href="{{ route('products.index') }}" class="text-blue-500 mb-4 inline-block">
-    ← Kembali
+    Kembali
 </a>
 
 <form action="{{ route('products.store') }}" method="POST" enctype="multipart/form-data" class="bg-white p-6 rounded shadow w-full max-w-lg">
