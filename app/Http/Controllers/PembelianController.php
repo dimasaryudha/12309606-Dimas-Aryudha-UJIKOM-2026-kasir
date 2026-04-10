@@ -44,6 +44,7 @@ class PembelianController extends Controller
             }
 
             $total = 0;
+
             foreach ($products as $item) {
                 $product = Product::findOrFail($item['id']);
 
@@ -69,7 +70,6 @@ class PembelianController extends Controller
 
                 $totalFinal = $total - $poinDipakai;
                 $poinBaru = floor($total * 0.01);
-
                 $totalPoin = $poinBaru;
             } else {
                 $totalFinal = $total;
@@ -78,16 +78,32 @@ class PembelianController extends Controller
                 $totalPoin = 0;
             }
 
-            if ($request->bayar < $totalFinal) {
-                return back()->with('error', 'Uang bayar kurang');
+            if ($totalFinal > 10000000) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Total bayar tidak boleh lebih dari Rp 10.000.000');
+            }
+
+            $bayar = str_replace('.', '', $request->bayar);
+
+            if (strlen($bayar) > 11) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Total bayar tidak boleh lebih dari 11 digit');
+            }
+
+            if ($bayar < $totalFinal) {
+                return back()
+                    ->withInput()
+                    ->with('error', 'Uang bayar kurang');
             }
 
             $pembelian = Pembelian::create([
                 'name' => $status == 'member' ? $request->nama : null,
                 'tanggal' => now(),
-                'price' => $totalFinal, 
-                'bayar' => $request->bayar,
-                'kembalian' => $request->bayar - $totalFinal,
+                'price' => $totalFinal,
+                'bayar' => $bayar,
+                'kembalian' => $bayar - $totalFinal,
                 'status_member' => $status,
                 'no_hp' => $status == 'member' ? $request->no_hp : null,
                 'poin' => $totalPoin,
@@ -168,4 +184,5 @@ class PembelianController extends Controller
     {
         return Excel::download(new PembelianExport, 'data_pembelian.xlsx');
     }
+    
 }

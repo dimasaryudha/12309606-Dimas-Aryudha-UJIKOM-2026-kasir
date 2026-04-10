@@ -57,14 +57,35 @@
         class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
         Simpan
     </button>
-
 </form>
 
+@if(session('duplicate_product'))
+    <form id="addStockForm"
+          action="{{ route('products.updateStock', session('product_id')) }}"
+          method="POST"
+          class="hidden">
+        @csrf
+        <input type="hidden" name="stock" value="{{ old('stock') }}">
+    </form>
+@endif
+
 <script>
-document.getElementById('price').addEventListener('keyup', function(){
-    let value = this.value.replace(/\D/g, '');
-    this.value = new Intl.NumberFormat('id-ID').format(value);
-});
+    document.getElementById('price').addEventListener('keyup', function () {
+        let value = this.value.replace(/\D/g, '');
+        this.value = new Intl.NumberFormat('id-ID').format(value);
+    });
+
+    @if(session('duplicate_product'))
+        document.addEventListener('DOMContentLoaded', function () {
+            let confirmStock = confirm(
+                'Produk dengan nama dan harga yang sama sudah ada.\n\nApakah Anda ingin menambahkan stok?'
+            );
+
+            if (confirmStock) {
+                document.getElementById('addStockForm').submit();
+            }
+        });
+    @endif
 </script>
 
 @endsection

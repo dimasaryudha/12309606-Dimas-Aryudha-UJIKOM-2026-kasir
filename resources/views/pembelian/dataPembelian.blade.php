@@ -79,10 +79,23 @@
 
 <div class="mb-4">
     <label>Total Bayar</label>
-    <input type="number" id="bayar" name="bayar" class="border p-2 rounded w-full" required>
+    <input type="text" id="bayar" name="bayar" value="{{ old('bayar') }}"
+        class="border p-2 rounded w-full"
+        placeholder="Masukkan total bayar" required>
+
     <div id="warning-bayar" class="text-red-500 text-sm hidden">
         Uang bayar kurang!
     </div>
+
+    <div id="warning-digit" class="text-red-500 text-sm hidden">
+        Total bayar tidak boleh lebih dari 11 digit.
+    </div>
+
+    @if(session('error'))
+        <div class="mb-4 p-3 bg-red-100 text-red-600 rounded">
+            {{ session('error') }}
+        </div>
+    @endif
 </div>
 
 <div class="text-right">
@@ -202,16 +215,32 @@ document.getElementById('poin').addEventListener('input', function() {
         'Rp ' + new Intl.NumberFormat('id-ID').format(final);
 });
 
-document.getElementById('bayar').addEventListener('input', function() {
-    let bayar = parseInt(this.value) || 0;
+document.getElementById('bayar').addEventListener('input', function () {
+    let value = this.value.replace(/\D/g, '');
+
+    let warningBayar = document.getElementById('warning-bayar');
+    let warningDigit = document.getElementById('warning-digit');
+
+    // batas maksimal 11 digit
+    if (value.length > 11) {
+        value = value.substring(0, 11);
+        warningDigit.classList.remove('hidden');
+    } else {
+        warningDigit.classList.add('hidden');
+    }
+
+    // format rupiah
+    this.value = new Intl.NumberFormat('id-ID').format(value);
+
+    let bayar = parseInt(value) || 0;
     let poin = parseInt(document.getElementById('poin').value) || 0;
     let final = total - poin;
-    let warning = document.getElementById('warning-bayar');
 
+    // validasi uang kurang
     if (bayar < final) {
-        warning.classList.remove('hidden');
+        warningBayar.classList.remove('hidden');
     } else {
-        warning.classList.add('hidden');
+        warningBayar.classList.add('hidden');
     }
 });
 

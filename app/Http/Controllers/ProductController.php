@@ -25,7 +25,7 @@ class ProductController extends Controller
         $request->validate([
             'name' => 'required',
             'price' => 'required',
-            'stock' => 'required|integer',
+            'stock' => 'required|integer|min:1|max:100',
             'image' => 'nullable|image|mimes:jpg,png,jpeg'
         ]);
 
@@ -34,6 +34,18 @@ class ProductController extends Controller
         if ($price > 100000) {
             return back()
                 ->withErrors(['price' => 'Harga tidak boleh lebih dari Rp 100.000'])
+                ->withInput();
+        }
+
+        $product = Product::where('name', $request->name)
+            ->where('price', $price)
+            ->first();
+
+        if ($product) {
+            return back()
+                ->with('duplicate_product', true)
+                ->with('product_id', $product->id)
+                ->with('current_stock', $product->stock)
                 ->withInput();
         }
 
@@ -92,7 +104,9 @@ class ProductController extends Controller
     public function updateStock(Request $request, Product $product)
     {
         $validator = Validator::make($request->all(), [
-            'stock' => 'required|integer|min:0'
+            'stock' => 'required|integer|min:0|max:100'
+        ], [
+            'stock.max' => 'Stok tidak boleh lebih dari 100'
         ]);
 
         if ($validator->fails()) {
