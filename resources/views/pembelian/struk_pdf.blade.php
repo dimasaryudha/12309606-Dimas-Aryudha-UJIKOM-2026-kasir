@@ -1,27 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Struk</title>
+    <title>Struk Pembayaran</title>
     <style>
-        body { font-family: sans-serif; }
-        .container { width: 100%; }
-        .flex { display: flex; justify-content: space-between; }
-        hr { margin: 10px 0; }
+        body {
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .container {
+            width: 300px;
+            margin: auto;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .flex {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        hr {
+            border: none;
+            border-top: 1px dashed #000;
+            margin: 8px 0;
+        }
+
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .small {
+            font-size: 11px;
+            color: #555;
+        }
+
+        ul {
+            padding-left: 15px;
+        }
     </style>
 </head>
 <body>
 
+@php
+    $poin = floor($data->price / 1000);
+@endphp
+
 <div class="container">
-    <div class="flex">
-        <h3>Struk Pembayaran</h3>
-        <div>
-            {{ $data->tanggal }}
-        </div>
+
+    <!-- HEADER -->
+    <div class="text-center">
+        <div class="title">Kasir WIkrama</div>
+        <div class="small">Jl. Raya Wangun</div>
+        <div class="small">Telp: 0812-9344-8333</div>
     </div>
 
     <hr>
 
-    <h4>Produk:</h4>
+    <!-- INFO -->
+    <div class="flex">
+        <span>No Transaksi</span>
+        <span>#{{ $data->id }}</span>
+    </div>
+
+    <div class="flex">
+        <span>Tanggal</span>
+        <span>{{ $data->tanggal }}</span>
+    </div>
+
+    <hr>
+
+    <!-- ITEM -->
+    <b>ITEM PEMBELIAN</b>
     <ul>
         @foreach($data->items_detail as $item)
             <li>{{ $item }}</li>
@@ -30,6 +83,7 @@
 
     <hr>
 
+    <!-- TOTAL -->
     <div class="flex">
         <span>Total</span>
         <span>Rp {{ number_format($data->price,0,',','.') }}</span>
@@ -44,6 +98,19 @@
         <span>Kembalian</span>
         <span>Rp {{ number_format($data->kembalian,0,',','.') }}</span>
     </div>
+
+    <div class="flex">
+        <span>Poin Didapat</span>
+        <span>+ {{ $poin }} pts</span>
+    </div>
+
+    <hr>
+
+    <!-- FOOTER -->
+    <div class="text-center small">
+        <p>Terima kasih telah berbelanja</p>
+    </div>
+
 </div>
 
 </body>

@@ -46,7 +46,9 @@ class DashboardController extends Controller
             $chartData[] = $dataBulanan[$i] ?? 0;
         }
 
-        $dataHarian = Pembelian::orderBy('tanggal', 'desc')->get();
+        $dataHarian = Pembelian::whereDate('tanggal', now()->toDateString())
+        ->orderBy('tanggal', 'desc')
+        ->get();
 
         $dataPerHari = [
             'Senin' => 0,

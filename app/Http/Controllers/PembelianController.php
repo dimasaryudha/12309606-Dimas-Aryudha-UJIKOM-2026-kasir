@@ -12,10 +12,39 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
 class PembelianController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $data = Pembelian::latest()->get();
+        $query = Pembelian::query();
 
+        // 🔥 FILTER HARI
+        if ($request->filled('hari')) {
+
+            $hariMap = [
+                'Senin' => 1,
+                'Selasa' => 2,
+                'Rabu' => 3,
+                'Kamis' => 4,
+                'Jumat' => 5,
+                'Sabtu' => 6,
+                'Minggu' => 7,
+            ];
+
+            $hari = $hariMap[$request->hari] ?? null;
+
+            if ($hari) {
+                $query->whereRaw('DAYOFWEEK(tanggal) = ?', [$hari + 1]);
+                // MySQL: 1 = Minggu, jadi +1
+            }
+        }
+
+        // 🔥 FILTER TANGGAL
+        if ($request->filled('tanggal')) {
+            $query->whereDate('tanggal', $request->tanggal);
+        }
+
+        $data = $query->latest()->get();
+
+        // 🔥 decode produk tetap jalan
         foreach ($data as $d) {
             $items = json_decode($d->detail_produk, true) ?? [];
             $d->items_detail = $items;
@@ -184,5 +213,5 @@ class PembelianController extends Controller
     {
         return Excel::download(new PembelianExport, 'data_pembelian.xlsx');
     }
-    
+
 }

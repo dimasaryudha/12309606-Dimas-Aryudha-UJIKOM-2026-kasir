@@ -77,7 +77,7 @@
         <div class="bg-white p-4 rounded-xl shadow flex flex-col h-full">
             <h2 class="text-lg font-bold mb-4">Penjualan Per Hari</h2>
 
-            <div class="overflow-auto flex-1">
+            <div class="overflow-y-auto flex-1 max-h-[280px]">
                 <table class="w-full text-sm border">
                     <thead>
                         <tr class="bg-gray-100">
@@ -115,7 +115,12 @@
                     <tbody>
                         @foreach($dataPerHari as $hari => $total)
                         <tr>
-                            <td class="border px-3 py-2">{{ $hari }}</td>
+                            <td class="border px-3 py-2">
+                                <a href="{{ route('pembelian.index', ['hari' => $hari]) }}"
+                                class="text-blue-600 hover:underline">
+                                    {{ $hari }}
+                                </a>
+                            </td>
                             <td class="border px-3 py-2">{{ $total }}</td>
                         </tr>
                         @endforeach
