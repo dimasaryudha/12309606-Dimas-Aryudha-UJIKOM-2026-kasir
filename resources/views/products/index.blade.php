@@ -61,7 +61,7 @@
                             </a>
                             <button onclick="openModal({{ $p->id }}, {{ $p->stock }})"
                                 class="bg-blue-500 px-3 py-1 rounded hover:bg-blue-600 text-sm text-white">
-                                Update Stok
+                                Stok
                             </button>
                             <form action="{{ route('products.destroy',$p->id) }}"
                                 method="POST">

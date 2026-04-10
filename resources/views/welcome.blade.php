@@ -10,7 +10,7 @@
 <body class="bg-gray-50 text-gray-800">
 
 <!-- NAVBAR -->
-<nav class="flex justify-between items-center px-8 py-5 bg-white shadow-sm">
+<nav class="flex justify-between items-center px-8 py-5 bg-white shadow-sm ">
     <h1 class="text-xl font-bold text-blue-600">KasirApp</h1>
 
     <div class="hidden md:flex gap-8 text-sm font-medium">
@@ -26,10 +26,10 @@
                 Dashboard
             </a>
         @else
-            <a href="{{ route('login') }}"
+            {{-- <a href="{{ route('login') }}"
                class="bg-blue-600 text-white px-4 py-2 rounded-full text-sm hover:bg-blue-700">
                 Login
-            </a>
+            </a> --}}
         @endauth
     </div>
 </nav>
@@ -50,7 +50,7 @@
         </p>
 
         <div class="flex gap-4 mb-4">
-            <a href=""
+            <a href="{{ route('login') }}"
                class="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow hover:scale-105 transition">
                 Mulai Sekarang 
             </a>
@@ -72,7 +72,7 @@
 </section>
 
 <!-- FOOTER -->
-<footer class="bg-white mt-16 py-6 text-center text-sm text-gray-500" style="margin-top: 125px">
+<footer class="bg-white mt-16 py-6 text-center text-sm text-gray-500" style="background: rgb(244, 244, 245);">
     © {{ date('Y') }} KasirApp. All rights reserved.
 </footer>
 

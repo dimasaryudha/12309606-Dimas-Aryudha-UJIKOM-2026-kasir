@@ -10,7 +10,7 @@
         <!-- Navigation -->
         <nav class="flex-1 p-4 space-y-2">
 
-            <a href=""
+            <a href="{{ route ("dashboard") }}"
             wire:navigate
             class="block px-4 py-2 rounded-lg hover:bg-gray-100">
             Dashboard
@@ -18,19 +18,19 @@
 
             @if(auth()->user()->role === 'admin')
 
-            <a href=""
+            <a href="{{ route ("products.index") }}"
             wire:navigate
             class="block px-4 py-2 rounded-lg hover:bg-gray-100">
             Products
             </a>
 
-            <a href=""
+            <a href="{{ route ("pembelian.index") }}"
             wire:navigate
             class="block px-4 py-2 rounded-lg hover:bg-gray-100">
             Pembelian
             </a>
 
-            <a href=""
+            <a href="{{ route ("users.index") }}"
             wire:navigate
             class="block px-4 py-2 rounded-lg hover:bg-gray-100">
             Users
@@ -46,7 +46,7 @@
             Products
             </a>
 
-            <a href=""
+            <a href="{{ route ("pembelian.index") }}"
             wire:navigate
             class="block px-4 py-2 rounded-lg hover:bg-gray-100">
             Pembelian
@@ -57,7 +57,7 @@
         </nav>
 
         <div class="border-t p-4">
-            <form method="POST" action="">
+            <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button
                     type="submit"
