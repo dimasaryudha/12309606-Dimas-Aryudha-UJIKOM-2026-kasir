@@ -31,6 +31,12 @@ class ProductController extends Controller
 
         $price = str_replace('.', '', $request->price);
 
+        if ($price > 100000) {
+            return back()
+                ->withErrors(['price' => 'Harga tidak boleh lebih dari Rp 100.000'])
+                ->withInput();
+        }
+
         $image = null;
         if ($request->file('image')) {
             $image = $request->file('image')->store('products', 'public');
@@ -60,6 +66,12 @@ class ProductController extends Controller
         ]);
 
         $price = str_replace('.', '', $request->price);
+
+        if ($price > 100000) {
+            return back()
+                ->withErrors(['price' => 'Harga tidak boleh lebih dari Rp 100.000'])
+                ->withInput();
+        }
 
         if ($request->file('image')) {
             if ($product->image) {

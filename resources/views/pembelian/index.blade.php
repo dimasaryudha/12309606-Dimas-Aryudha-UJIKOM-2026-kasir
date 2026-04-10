@@ -13,7 +13,7 @@
         @if(auth()->user()->role == 'petugas')
         <a href="{{ route('pembelian.create') }}"
         class="bg-blue-600 px-4 py-2 rounded-lg text-white">
-            Pembelian
+            Tambah
         </a>
         @endif
 
